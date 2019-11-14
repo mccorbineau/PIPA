@@ -1,0 +1,83 @@
+PIPA
+
+****************************************************************************************************
+* author: Marie-Caroline Corbineau    		                                                   *
+* institution: Université Paris-Saclay, CentraleSupélec, Inria, Centre de Vision Numérique,        *  
+*              91190, Gif-sur-Yvette, France                                                       *
+* date: Wednesday, November 13th 2019 	                                                           *
+* license: GNU General Public License v3.0                                                         *
+****************************************************************************************************
+
+****************************************************************************************************
+* RECOMMENDATIONS:                                                                                 *
+* This code is designed to work with Matlab R2018b                                                 *     
+****************************************************************************************************
+
+----------------------------------------------------------------------------------------------------
+DESCRIPTION:
+
+This code allows to perform two different image processing applications both formulated as the mini-
+mization of a convex objective function under convex constraints. In both cases the minimization 
+process is based on a Proximal Interior Point Algorithm (PIPA) including a variable metric.
+
+Hyperspectral unmixing
+======================
+The inverse problem is formulated as follows: minimize_X  0.5*||Y-S*X||_2^2 + reg*||W*X||_{1,detail}
+                                              subject to  for every pixel p, sum_i(X_{i,p})<=1
+                                                          X >=0
+Where: Y is the data
+       X is the abundance map (proportion of every material in every pixel)
+       S is the library of the spectral signatures of the different materials for various spectral 
+       bands reg is a regularization parameter
+       W is an orthogonal wavelet transform
+       ||W.||_{1,detail} is the l1 norm of the detail wavelet coefficients 
+       X_{i,p} is the abundance of material i in pixel p
+
+Joint decomposition and reconstruction of tomographic data
+==========================================================
+The decomposition is done by identifying a geometry component (piecewise constant) and a texture 
+(locally fast-varying elements).
+The problem is formulated as follows: minimize_(x^t,x^g)  0.5*||F*x^t||_2^2 + alpha*TV(x^g)
+                                              subject to  -chi<= H*(x^t+x^g)-y <= chi
+                                                          xmin <= x^t+x^g <= xmax
+                                                          -xmax/3 <= xt <= xmax/3
+Where: F=I_N-Delta and Delta is the Laplacian edge detection operator
+       TV is the total variation seminorm
+       alpha is a regularization parameter
+       x^t and x^g are the texture and the geometry, respectively
+       H is the observation operator (radon transform)
+       y is the tomographic data
+       chi is the measurement uncertainty
+
+This toolbox consists of 5 subfolders:
+1) data_geo_text: data for the geometry-texture decomposition application, contains the CT operator 
+                  H and data for two real images (glass and agaricus)
+1) data_hyperspectral: data for the hyperspectral unmixing application (Urban dataset)
+2) functions_geo_text: decomposition/reconstruction programs
+4) functions_hyperspectral: hyperspectral unmixing programs
+3) TOOLBOX_DWTRed_Frame: wavelet toolbox provided by Caroline Chaux (more information within this 
+                         folder)
+
+Information about the data:
+- Urban dataset: available online on http://www.escience.cn/people/feiyunZHU/Dataset_GT.html
+- glass: Phase-separated barium borosilicate glass, imaged at the ESRF synchrotron, courtesy of 
+  David Bouttes
+- agaricus: mushroom Agaricus bisporus, courtesy of DigiMorph.org, The University of Texas High-
+  Resolution X-ray CT Facility (UTCT), and NSF Grant IIS-0208675
+
+---------------------------------------------------------------------------------------------------
+SPECIFICATIONS for using PIPA_JMIV_2019:
+
+A demo file is provided :
+* demo.m runs the hyperspectral unmixing and joint geometry-texture decomposition and CT data
+  reconstruction applications. These numerical experiments correspond to Sections 4.1 and 4.2 from 
+  the article below.
+
+---------------------------------------------------------------------------------------------------
+RELATED PUBLICATION:
+
+# A proximal interior point algorithm with applications to image processing, Emilie Chouzenoux, 
+  Marie-Caroline Corbineau, Jean-Christophe Pesquet. To appear in Journal of Mathematical Imaging 
+  and Vision, doi:10.1007/s10851-019-00916-w (2019). 
+
+---------------------------------------------------------------------------------------------------
